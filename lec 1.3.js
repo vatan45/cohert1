@@ -1,26 +1,26 @@
-// // let filecontent = readfile("./choclate.txt");
-// // console.log("hi there");
+let filecontent = readfile("./choclate.txt");
+console.log("hi there");
 
-// const { log } = require("console");
-
-
-
-// // readFile("./choclate.txt", function(contents){
-// //     console.log(contents);
-// // })
-
-// function printtoscreen(){
-//     console.log("hello world");
-// }
-// setTimeout(printtoscreen, 1*1000);
+const { log } = require("console");
 
 
-// let counter =0;
-// for(let i =0; i<1000; i++){
-//     counter = counter +1;
+
+readFile("./choclate.txt", function(contents){
+    console.log(contents);
+})
+
+function printtoscreen(){
+    console.log("hello world");
+}
+setTimeout(printtoscreen, 1*1000);
+
+
+let counter =0;
+for(let i =0; i<1000; i++){
+    counter = counter +1;
     
-// }
-// console.log(counter);
+}
+console.log(counter);
 
 
 
