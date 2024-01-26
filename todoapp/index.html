@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>todo app</title>
+</head>
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+    }
+
+    #mainArea {
+        width: 60%;
+        max-width: 600px;
+        margin-top: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        box-sizing: border-box;
+    }
+
+    .todo {
+        margin-bottom: 10px;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border-radius: 4px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .todo button {
+        background-color: #ff6961;
+        color: #fff;
+        border: none;
+        padding: 8px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    input[type="text"],
+    button {
+        margin-bottom: 10px;
+        padding: 8px;
+        font-size: 16px;
+    }
+
+    button {
+        background-color: #4caf50;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+</style>
+<script>
+    function deletedone(todoId) {
+        console.log("done delete");
+
+        // Remove the deleted todo from the list
+        var deletedTodo = document.getElementById(todoId);
+        if (deletedTodo) {
+            deletedTodo.remove();
+        } else {
+            console.error("Todo not found in the DOM");
+        }
+    }
+
+    function deleteTodo(id) {
+        fetch("http://localhost:3000/todos/" + id, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(() => deletedone("todo" + id)); // Pass the ID to deletedone
+    }
+
+    function todoscallback(data) {
+        console.log(data);
+        var parentElement = document.getElementById("mainArea");
+        for (var i = 0; i < data.length; i++) {
+            var childElement = document.createElement("div");
+            childElement.id = "todo" + data[i].id; // Assign unique ID to each todo
+
+            var grandChildElement1 = document.createElement("span");
+            grandChildElement1.innerHTML = data[i].title;
+
+            var grandChildElement2 = document.createElement("span");
+            grandChildElement2.innerHTML = data[i].description;
+
+            var grandChildElement3 = document.createElement("button");
+            grandChildElement3.innerHTML = "Delete";
+            grandChildElement3.setAttribute("onclick", "deleteTodo(" + data[i].id + ")");
+
+            childElement.appendChild(grandChildElement1);
+            childElement.appendChild(grandChildElement2);
+            childElement.appendChild(grandChildElement3);
+
+            parentElement.appendChild(childElement);
+        }
+    }
+
+    function callback2(resp) {
+        resp.json().then(todoscallback);
+    }
+
+    function getData() {
+        fetch("http://localhost:3000/todos", {
+            method: "GET",
+        }).then(callback2);
+    }
+
+    getData();
+
+    function parsedResponse(data) {
+        console.log(data);
+        var parentElement = document.getElementById("mainArea");
+        var childElement = document.createElement("div");
+        childElement.id = "todo" + data.id;
+
+        var grandChildElement1 = document.createElement("span");
+        grandChildElement1.innerHTML = data.title;
+
+        var grandChildElement2 = document.createElement("span");
+        grandChildElement2.innerHTML = data.description;
+
+        var grandChildElement3 = document.createElement("button");
+        grandChildElement3.innerHTML = "Delete";
+        grandChildElement3.setAttribute("onclick", "deleteTodo(" + data.id + ")");
+
+        childElement.appendChild(grandChildElement1);
+        childElement.appendChild(grandChildElement2);
+        childElement.appendChild(grandChildElement3);
+
+        parentElement.appendChild(childElement);
+    }
+
+    function callback(resp) {
+        resp.json().then(parsedResponse);
+    }
+
+    function onpress() {
+        var title = document.getElementById("tittle").value;
+        var description = document.getElementById("description").value;
+
+        fetch("http://localhost:3000/todos", {
+            method: "POST",
+            body: JSON.stringify({
+                title: title,
+                description: description
+            }),
+            headers: {
+                "content-type": "application/json"
+            }
+        }).then(callback);
+    }
+</script>
+<body>
+    Todo title
+    <input type="text" id="tittle"></input>
+    Todo description
+    <input type="text" id="description"></input>
+    <button onclick="onpress()">send todo</button>
+    <div id="mainArea"></div>
+</body>
+</html>
